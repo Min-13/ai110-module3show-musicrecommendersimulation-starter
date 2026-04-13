@@ -12,8 +12,8 @@ import csv
 ALPHA = 0.6   # weight for rule-based score
 BETA  = 0.4   # weight for similarity score
 
-# Finalized weights: genre(2.0) + mood(1.0) + acoustic(1.0) = 4.0
-_MAX_RULE_RAW = 4.0
+# Finalized weights: genre(2.0) + mood(1.0) + acoustic(1.0) + instrumental(1.0) = 5.0
+_MAX_RULE_RAW = 5.0
 
 # Four numeric features each in [0, 1] → worst-case distance = √4 = 2.0
 _MAX_NUMERIC_DIST = math.sqrt(4)
@@ -102,13 +102,15 @@ def _energy_gap(song_energy: float, target: float) -> float:
 
 
 def _rule_score(song: Song, user: UserProfile) -> float:
-    """Award points for genre (+2.0), mood (+1.0), and acoustic (+1.0) matches, normalised to [0, 1]."""
+    """Award points for genre (+2.0), mood (+1.0), acoustic (+1.0), and instrumental (+1.0) matches, normalised to [0, 1]."""
     raw = 0.0
     if song.genre == user.favorite_genre:
         raw += 2.0
     if song.mood == user.favorite_mood:
         raw += 1.0
     if user.likes_acoustic and song.acousticness > 0.6:
+        raw += 1.0
+    if user.wants_instrumental and song.instrumentalness > 0.6:
         raw += 1.0
     return raw / _MAX_RULE_RAW
 
@@ -196,6 +198,11 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     if likes_acoustic and float(song.get("acousticness", 0)) > 0.6:
         rule_raw += 1.0
         reasons.append(f"acoustic preference match (+1.0)")
+
+    wants_instrumental_rule = bool(user_prefs.get("wants_instrumental", False))
+    if wants_instrumental_rule and float(song.get("instrumentalness", 0)) > 0.6:
+        rule_raw += 1.0
+        reasons.append(f"instrumental rule match (+1.0)")
 
     rule_score = rule_raw / _MAX_RULE_RAW
 

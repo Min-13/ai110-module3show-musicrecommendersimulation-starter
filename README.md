@@ -59,6 +59,9 @@ Limitations and Risks
 The system has several built-in limitations worth naming. Because genre carries twice the weight of mood, a great song that matches the user's listening context but belongs to a different genre will consistently rank below a genre match with the wrong mood — which is the wrong trade-off for activity-based listeners like someone studying or working out. The 20-song catalog is too small for the similarity layer to matter much: when only one or two songs match a genre, the rule layer dominates and the numeric features rarely change the ranking. The popularity floor silently removes songs before scoring, so a niche track that would have been a perfect match simply never appears. Finally, the profile is static — it never updates based on what the user actually plays or skips, which means it can only reflect what the user thought they wanted, not what they actually respond to.
 
 ![](ai110_proj3.png)
+![](ai110_proj3_p2.png)
+![](ai110_pro3_p3.png)
+![](ai110_pro3_p4.png)
 ---
 
 ## Getting Started
