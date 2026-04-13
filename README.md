@@ -31,7 +31,7 @@ You can include a simple diagram or bullet list if helpful.
 
 Each Song stores ten attributes: an id, title, and artist for identification, plus seven scoring features — genre and mood (categorical), and energy, tempo_bpm, valence, danceability, and acousticness (numeric floats between 0 and 1). A UserProfile captures four preferences: favorite_genre, favorite_mood, target_energy, and likes_acoustic. To score a song, the Recommender runs two layers: a rule layer that awards points for categorical matches (genre +1.5, mood +1.5, acoustic preference +1.0, normalized to [0, 1]), and a similarity layer that measures Euclidean distance across energy, acousticness, and valence — converting proximity into a [0, 1] score. These combine as 0.6 × rule score + 0.4 × similarity score. To choose recommendations, every song in the catalog receives a hybrid score, the list is sorted highest to lowest, and the top k results are returned — each paired with a plain-language explanation of what drove the match.
 
-Song features:
+## Song features: ##
 
 Feature	Type	Role in scoring
 genre	categorical	rule layer — +1.5 if matches user
@@ -50,11 +50,11 @@ favorite_mood	string	matched against song.mood; also maps to a valence target
 target_energy	float [0,1]	compared to song.energy in similarity layer
 likes_acoustic	bool	maps to acousticness target (0.75 if True, 0.15 if False)
 
-How The System Works
+## How The System Works ##
 
 The recommender scores every song in the catalog against a user profile using a hybrid of two layers. The rule layer (weighted at 60%) awards points for categorical matches — +2.0 for a genre match, +1.0 for a mood match, and +1.0 if the user prefers acoustic and the song's acousticness exceeds 0.6 — then normalizes the total to a [0, 1] score. The similarity layer (40%) computes Euclidean distance across four numeric features — energy, acousticness, valence, and instrumentalness — converting proximity into a second [0, 1] score, with a tolerance band on energy so small deviations don't penalize a song. The two layers combine into a single hybrid score, with a small recency bonus for songs from the user's preferred era. Songs below a popularity floor are filtered out before scoring, and the top-k results are returned each with a plain-language explanation of what drove the match.
 
-Limitations and Risks
+## Limitations and Risks ##
 
 The system has several built-in limitations worth naming. Because genre carries twice the weight of mood, a great song that matches the user's listening context but belongs to a different genre will consistently rank below a genre match with the wrong mood — which is the wrong trade-off for activity-based listeners like someone studying or working out. The 20-song catalog is too small for the similarity layer to matter much: when only one or two songs match a genre, the rule layer dominates and the numeric features rarely change the ranking. The popularity floor silently removes songs before scoring, so a niche track that would have been a perfect match simply never appears. Finally, the profile is static — it never updates based on what the user actually plays or skips, which means it can only reflect what the user thought they wanted, not what they actually respond to.
 
